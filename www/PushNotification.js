@@ -1,4 +1,4 @@
-var PushNotification = function() {
+cordova.define("com.phonegap.plugins.PushPlugin.PushNotification", function(require, exports, module) { var PushNotification = function() {
 };
 
 
@@ -34,6 +34,23 @@ PushNotification.prototype.unregister = function(successCallback, errorCallback,
     }
 
      cordova.exec(successCallback, errorCallback, "PushPlugin", "unregister", [options]);
+};
+
+// Call send upstream message
+PushNotification.prototype.send = function(successCallback, errorCallback, options) {
+    if (errorCallback == null) { errorCallback = function() {}}
+
+    if (typeof errorCallback != "function")  {
+        console.log("PushNotification.send failure: failure parameter not a function");
+        return
+    }
+
+    if (typeof successCallback != "function") {
+        console.log("PushNotification.send failure: success callback parameter must be a function");
+        return
+    }
+
+     cordova.exec(successCallback, errorCallback, "PushPlugin", "send", [options]);
 };
 
     // Call this if you want to show toast notification on WP8
@@ -76,3 +93,4 @@ if (!window.plugins.pushNotification) {
 if (typeof module != 'undefined' && module.exports) {
   module.exports = PushNotification;
 }
+});

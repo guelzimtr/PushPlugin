@@ -1,8 +1,40 @@
-# [DEPRECATED] Cordova Push Notifications Plugin for Android, iOS, WP8, Windows8, BlackBerry 10 and Amazon Fire OS
+# What is this fork?
+
+In addition to the already existing register and receive features, this fork add the feature of pushing notifications to the GCM infrastructure. 
+
+# Supported platforms
+
+* Android
+
+# Not yet supported (Needs contributors)
+
+* iOS
+* Windows
+* Amazon
+* wp8
+
+# Send message format
+
+The following JSON object describes the format of the message to be sent.
+
+	MESSAGE: The entire object below is used as the GCM message.
+	
+	{
+        "id": <APP_GENERATED_MESSAGE_ID | MANDATORY>,
+		"senderid": <GCM_SENDER_ID | MANDATORY>,
+        "createdOn": <APP_GENERATED_MESSAGE DATE | OPTIONAL>,
+        
+		...
+		<APP_DEFINED_JSON_DATA>
+    }
+
+	
+### _This plugin is based on a deprecated repository, i.e. the original repository is no longer maintained. Going forward additional features and bug fixes will be added to the new [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push) repository._
 
 
-### _This plugin is deprecated, i.e. it is no longer maintained. Going forward additional features and bug fixes will be added to the new [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push) repository._
+# Creating a chat application with Ionic and GCM
 
+Please contact me at guelzimtr [at] gmail [dot] com for more information on this.
 
 ## DESCRIPTION
 

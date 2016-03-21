@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.android.gcm.GCMRegistrar;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -12,6 +13,7 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.IOException;
 
 import java.util.Iterator;
 
@@ -24,6 +26,7 @@ public class PushPlugin extends CordovaPlugin {
 
 	public static final String REGISTER = "register";
 	public static final String UNREGISTER = "unregister";
+	public static final String SEND = "send";
 	public static final String EXIT = "exit";
 
 	private static CordovaWebView gWebView;
@@ -31,6 +34,7 @@ public class PushPlugin extends CordovaPlugin {
 	private static String gSenderID;
 	private static Bundle gCachedExtras = null;
     private static boolean gForeground = false;
+	private GoogleCloudMessaging gcm;
 
 	/**
 	 * Gets the application context from cordova's main activity.
@@ -65,6 +69,7 @@ public class PushPlugin extends CordovaPlugin {
 				GCMRegistrar.register(getApplicationContext(), gSenderID);
 				result = true;
 				callbackContext.success();
+				
 			} catch (JSONException e) {
 				Log.e(TAG, "execute: Got JSON Exception " + e.getMessage());
 				result = false;
@@ -84,6 +89,12 @@ public class PushPlugin extends CordovaPlugin {
 			Log.v(TAG, "UNREGISTER");
 			result = true;
 			callbackContext.success();
+			
+		} else if (SEND.equals(action)) {
+			
+			Log.v(TAG, "SEND");
+			result =  send(action, data,callbackContext );
+		
 		} else {
 			result = false;
 			Log.e(TAG, "Invalid action : " + action);
@@ -93,6 +104,47 @@ public class PushPlugin extends CordovaPlugin {
 		return result;
 	}
 
+	
+	private boolean send(String action, JSONArray data,  CallbackContext callbackContext) {
+		try {
+				
+				if(gcm != null) {
+					
+					
+					JSONObject msg = data.getJSONObject(0);
+					String to = (String) msg.get("senderid");
+					String id =  (String) msg.get("id");
+					
+					// Create the bundle
+					Bundle bundle = new Bundle();
+					String msgStr = msg.toString();
+					bundle.putString("message", msgStr);
+					
+					// Log for debug purposes
+					Log.v(TAG, "SEND message to GCM: \n MSG ID= " + id + "\n TO= " + to + "\n MESSAGE= " + msgStr );
+					
+					// Send the bundle to CGM infra
+					gcm.send(to, id, bundle);
+					
+					// Notify JS user space
+					callbackContext.success();
+					return true;
+				}
+		} catch (JSONException e) {
+			Log.e(TAG, "execute: Got JSON Exception " + e.getMessage());
+			callbackContext.error(e.getMessage());
+			return false;
+		} catch (IOException e) {
+			Log.e(TAG, "execute: Got I/O Exception " + e.getMessage());
+			//return false;
+			callbackContext.error(e.getMessage());
+			return false;
+		}
+		
+		callbackContext.error("GCM not initialized : " + action);
+		return false;
+	}
+	
 	/*
 	 * Sends a json object to the client as parameter to a method which is defined in gECB.
 	 */
@@ -125,6 +177,7 @@ public class PushPlugin extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         gForeground = true;
+		gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
     }
 
 	@Override
@@ -243,3 +296,4 @@ public class PushPlugin extends CordovaPlugin {
     	return gWebView != null;
     }
 }
+
