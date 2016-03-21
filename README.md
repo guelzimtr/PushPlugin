@@ -28,8 +28,10 @@ The following JSON object describes the format of the message to be sent.
 		<APP_DEFINED_JSON_DATA>
     }
 
-	
-### _This plugin is based on a deprecated repository, i.e. the original repository is no longer maintained. Going forward additional features and bug fixes will be added to the new [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push) repository._
+
+# Disclaimer
+
+ _This plugin is based on a deprecated repository, i.e. the original repository is no longer maintained. Going forward additional features and bug fixes will be added to the new [phonegap-plugin-push](https://github.com/phonegap/phonegap-plugin-push) repository._
 
 
 # Creating a chat application with Ionic and GCM
